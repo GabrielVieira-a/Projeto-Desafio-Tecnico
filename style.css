@@ -34,30 +34,34 @@ body {
   padding: 40px 60px;
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-  animation: fadeIn 2.5s ease-in-out;
+  max-width: 400px;
+  width: 90%;
+  animation: fadeIn 0.5s forwards;
 }
 
-/* Título */
-.title {
+/* Títulos */
+.container h1, .container h2 {
   font-size: 2rem;
   margin-bottom: 15px;
   letter-spacing: 1px;
-  opacity: 0;
-  animation: fadeInText 3s ease forwards;
-  animation-delay: 0.5s;
 }
 
-/* Subtítulo */
-.subtitle {
-  font-size: 1rem;
+.container p {
   margin-bottom: 25px;
-  opacity: 0;
-  animation: fadeInText 3s ease forwards;
-  animation-delay: 1s;
+  font-size: 1rem;
 }
 
-/* Botão */
-.btn {
+/* Inputs e Botões */
+.container input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: none;
+  font-size: 1rem;
+}
+
+.container button {
   background: #00c896;
   color: #fff;
   border: none;
@@ -67,25 +71,30 @@ body {
   font-size: 1rem;
   font-weight: 500;
   transition: all 0.4s ease;
-  opacity: 0;
-  animation: fadeInText 3s ease forwards;
-  animation-delay: 1.5s;
 }
 
-.btn:hover {
+.container button:hover {
   background: #00a87c;
   transform: scale(1.05);
 }
 
-/* Animações */
+/* Fade in / Fade out para transições SPA */
+.fadeIn {
+  animation: fadeIn 0.5s forwards;
+}
+
+.fadeOut {
+  animation: fadeOut 0.5s forwards;
+}
+
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(40px); }
+  from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes fadeInText {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(20px); }
 }
 
 /* Responsividade */
@@ -95,26 +104,11 @@ body {
     padding: 30px 20px;
   }
 
-  .title {
+  .container h1, .container h2 {
     font-size: 1.5rem;
   }
 
-  .btn {
+  .container button {
     width: 100%;
   }
 }
-
-/* Transições suaves SPA */
-.fadeIn {
-  animation: fadeIn 0.5s forwards;
-}
-
-.fadeOut {
-  animation: fadeOut 0.5s forwards;
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; transform: translateY(0); }
-  to { opacity: 0; transform: translateY(20px); }
-}
-
