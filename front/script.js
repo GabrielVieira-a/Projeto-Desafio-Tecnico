@@ -1,3 +1,4 @@
+// --------- Partículas ---------
 const canvas = document.getElementById('background');
 const ctx = canvas.getContext('2d');
 const container = document.getElementById('container');
@@ -6,11 +7,9 @@ const btnComecar = document.getElementById('btnComecar');
 let particlesArray;
 const numberOfParticles = 80;
 
-// Ajusta canvas
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// Classe Partícula
 class Particle {
   constructor() {
     this.x = Math.random() * canvas.width;
@@ -20,16 +19,14 @@ class Particle {
     this.speedY = Math.random() * 1 - 0.5;
     this.color = 'rgba(255,255,255,0.6)';
   }
-
   update() {
     this.x += this.speedX;
     this.y += this.speedY;
-    if(this.x > canvas.width) this.x = 0;
-    if(this.x < 0) this.x = canvas.width;
-    if(this.y > canvas.height) this.y = 0;
-    if(this.y < 0) this.y = canvas.height;
+    if (this.x > canvas.width) this.x = 0;
+    if (this.x < 0) this.x = canvas.width;
+    if (this.y > canvas.height) this.y = 0;
+    if (this.y < 0) this.y = canvas.height;
   }
-
   draw() {
     ctx.fillStyle = this.color;
     ctx.beginPath();
@@ -38,20 +35,18 @@ class Particle {
   }
 }
 
-// Inicializa partículas
 function init() {
   particlesArray = [];
-  for(let i=0; i<numberOfParticles; i++) particlesArray.push(new Particle());
+  for (let i=0; i<numberOfParticles; i++) particlesArray.push(new Particle());
 }
 
-// Loop de animação
 function animate() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
   particlesArray.forEach(p => { p.update(); p.draw(); });
   requestAnimationFrame(animate);
 }
 
-window.addEventListener('resize', ()=>{
+window.addEventListener('resize', () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   init();
@@ -60,35 +55,8 @@ window.addEventListener('resize', ()=>{
 init();
 animate();
 
-// -------- SPA + Indicação --------
-let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+// --------- SPA + Backend ---------
 let usuarioLogado = null;
-
-function salvarUsuarios() {
-  localStorage.setItem('usuarios', JSON.stringify(usuarios));
-}
-
-function atualizarPontuacaoTela() {
-  if(usuarioLogado) {
-    const span = document.getElementById('pontos');
-    if(span) span.textContent = usuarioLogado.pontos;
-  }
-}
-
-function checkReferral() {
-  const params = new URLSearchParams(window.location.search);
-  const refId = params.get('ref');
-  if(refId) {
-    const indicado = usuarios.find(u => u.id == refId);
-    if(indicado) {
-      indicado.pontos += 1;
-      salvarUsuarios();
-      if(usuarioLogado && usuarioLogado.id == refId) atualizarPontuacaoTela();
-      alert(`${indicado.nome} ganhou 1 ponto pela indicação!`);
-    }
-  }
-}
-checkReferral();
 
 // Função de transição
 function trocarTela(funcTela) {
@@ -124,51 +92,69 @@ function showCadastro() {
   const form = document.getElementById('formCadastro');
   const mensagem = document.getElementById('mensagem');
 
-  form.addEventListener('submit', e => {
+  form.addEventListener('submit', async e => {
     e.preventDefault();
 
     const nome = form.nome.value.trim();
     const email = form.email.value.trim();
     const senha = form.senha.value.trim();
 
-    if(!email.includes('@')){
+    if (!email.includes('@')) {
       mensagem.textContent = 'Email inválido';
       return;
     }
-    if(senha.length < 8 || !/\d/.test(senha) || !/[a-zA-Z]/.test(senha)){
+    if (senha.length < 8 || !/\d/.test(senha) || !/[a-zA-Z]/.test(senha)) {
       mensagem.textContent = 'Senha deve ter 8+ caracteres, letras e números';
       return;
     }
 
-    const id = Date.now();
-    const usuario = {
-      id,
-      nome,
-      email,
-      pontos: 0,
-      link: `${window.location.href.split('?')[0]}?ref=${id}`
-    };
-    usuarios.push(usuario);
-    salvarUsuarios();
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const referralCode = urlParams.get('ref') || null;
 
-    usuarioLogado = usuario;
-    trocarTela(() => showPerfil(usuarioLogado));
+      const response = await fetch('http://localhost:3000/api/users/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ name: nome, email, password: senha, referralCode })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        usuarioLogado = data.user;
+        trocarTela(() => showPerfil(usuarioLogado));
+      } else {
+        mensagem.textContent = data.error || 'Erro ao cadastrar';
+      }
+    } catch(err) {
+      console.error(err);
+      mensagem.textContent = 'Erro de conexão com o servidor';
+    }
   });
 }
 
 // Tela de perfil
-function showPerfil(usuario) {
-  container.innerHTML = `
-    <h2>Bem-vindo(a), ${usuario.nome}</h2>
-    <p>Pontos: <span id="pontos">${usuario.pontos}</span></p>
-    <p>Seu link de indicação: <span id="linkInd">${usuario.link}</span></p>
-    <button id="copiarBtn">Copiar Link</button>
-  `;
+async function showPerfil(usuario) {
+  try {
+    const response = await fetch(`http://localhost:3000/api/users/profile/${usuario.id}`);
+    const user = await response.json();
 
-  const copiarBtn = document.getElementById('copiarBtn');
-  copiarBtn.addEventListener('click', ()=>{
-    navigator.clipboard.writeText(usuario.link)
-      .then(()=>alert('Link copiado!'))
-      .catch(()=>alert('Erro ao copiar o link'));
-  });
+    container.innerHTML = `
+      <h2>Bem-vindo(a), ${user.name}</h2>
+      <p>Pontos: <span id="pontos">${user.points}</span></p>
+      <p>Seu link de indicação: <span id="linkInd">http://127.0.0.1:5500/index.html?ref=${user.referralCode}</span></p>
+      <button id="copiarBtn">Copiar Link</button>
+    `;
+
+    const copiarBtn = document.getElementById('copiarBtn');
+    copiarBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(`http://127.0.0.1:5500/index.html?ref=${user.referralCode}`)
+        .then(()=>alert('Link copiado!'))
+        .catch(()=>alert('Erro ao copiar link'));
+    });
+
+  } catch(err) {
+    console.error(err);
+    container.innerHTML = '<p>Erro ao carregar perfil</p>';
+  }
 }
