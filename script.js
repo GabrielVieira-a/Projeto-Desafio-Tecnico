@@ -33,28 +33,25 @@ class Particle {
   draw() {
     ctx.fillStyle = this.color;
     ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
     ctx.fill();
   }
 }
 
+// Inicializa partículas
 function init() {
   particlesArray = [];
-  for (let i = 0; i < numberOfParticles; i++) {
-    particlesArray.push(new Particle());
-  }
+  for(let i=0; i<numberOfParticles; i++) particlesArray.push(new Particle());
 }
 
+// Loop de animação
 function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particlesArray.forEach(p => {
-    p.update();
-    p.draw();
-  });
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particlesArray.forEach(p => { p.update(); p.draw(); });
   requestAnimationFrame(animate);
 }
 
-window.addEventListener('resize', () => {
+window.addEventListener('resize', ()=>{
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   init();
@@ -63,33 +60,61 @@ window.addEventListener('resize', () => {
 init();
 animate();
 
-// -------- SPA + Indicação --------
+// -------- SPA + Indicação com Transições --------
 
-// Array em memória para simular usuários
-let usuarios = [];
+// Carrega usuários do localStorage
+let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+let usuarioLogado = null;
 
-// Função para verificar indicação via URL
+// Salva usuários
+function salvarUsuarios() {
+  localStorage.setItem('usuarios', JSON.stringify(usuarios));
+}
+
+// Atualiza a pontuação na tela do usuário logado
+function atualizarPontuacaoTela() {
+  if(usuarioLogado) {
+    const span = document.getElementById('pontos');
+    if(span) span.textContent = usuarioLogado.pontos;
+  }
+}
+
+// Verifica indicação via URL
 function checkReferral() {
   const params = new URLSearchParams(window.location.search);
   const refId = params.get('ref');
-  if (refId) {
+  if(refId) {
     const indicado = usuarios.find(u => u.id == refId);
-    if (indicado) {
+    if(indicado) {
       indicado.pontos += 1;
+      salvarUsuarios();
+      if(usuarioLogado && usuarioLogado.id == refId) atualizarPontuacaoTela();
       alert(`${indicado.nome} ganhou 1 ponto pela indicação!`);
     }
   }
 }
-
-// Chama ao carregar a página
 checkReferral();
+
+// Função para trocar tela com animação
+function trocarTela(funcTela) {
+  container.classList.remove('fadeIn');
+  container.classList.add('fadeOut');
+
+  container.addEventListener('animationend', function handler() {
+    container.removeEventListener('animationend', handler);
+
+    funcTela(); // Troca conteúdo
+    container.classList.remove('fadeOut');
+    container.classList.add('fadeIn');
+  });
+}
 
 // Clique no botão "Começar"
 btnComecar.addEventListener('click', () => {
-  showCadastro();
+  trocarTela(() => showCadastro());
 });
 
-// Função para mostrar o formulário de cadastro
+// Tela de cadastro
 function showCadastro() {
   container.innerHTML = `
     <h2>Cadastro</h2>
@@ -105,24 +130,22 @@ function showCadastro() {
   const form = document.getElementById('formCadastro');
   const mensagem = document.getElementById('mensagem');
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', e => {
     e.preventDefault();
 
     const nome = form.nome.value.trim();
     const email = form.email.value.trim();
     const senha = form.senha.value.trim();
 
-    // Validação simples
-    if(!email.includes('@')) {
+    if(!email.includes('@')){
       mensagem.textContent = 'Email inválido';
       return;
     }
-    if(senha.length < 8 || !/\d/.test(senha) || !/[a-zA-Z]/.test(senha)) {
+    if(senha.length < 8 || !/\d/.test(senha) || !/[a-zA-Z]/.test(senha)){
       mensagem.textContent = 'Senha deve ter 8+ caracteres, letras e números';
       return;
     }
 
-    // Cria usuário e adiciona ao array
     const id = Date.now();
     const usuario = {
       id,
@@ -132,12 +155,14 @@ function showCadastro() {
       link: `${window.location.href.split('?')[0]}?ref=${id}`
     };
     usuarios.push(usuario);
+    salvarUsuarios();
 
-    showPerfil(usuario);
+    usuarioLogado = usuario;
+    trocarTela(() => showPerfil(usuarioLogado));
   });
 }
 
-// Função para mostrar a tela de perfil
+// Tela de perfil
 function showPerfil(usuario) {
   container.innerHTML = `
     <h2>Bem-vindo(a), ${usuario.nome}</h2>
@@ -147,9 +172,9 @@ function showPerfil(usuario) {
   `;
 
   const copiarBtn = document.getElementById('copiarBtn');
-  copiarBtn.addEventListener('click', () => {
+  copiarBtn.addEventListener('click', ()=>{
     navigator.clipboard.writeText(usuario.link)
-      .then(() => alert('Link copiado!'))
-      .catch(() => alert('Erro ao copiar o link'));
+      .then(()=>alert('Link copiado!'))
+      .catch(()=>alert('Erro ao copiar o link'));
   });
 }
