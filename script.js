@@ -24,10 +24,10 @@ class Particle {
   update() {
     this.x += this.speedX;
     this.y += this.speedY;
-    if (this.x > canvas.width) this.x = 0;
-    if (this.x < 0) this.x = canvas.width;
-    if (this.y > canvas.height) this.y = 0;
-    if (this.y < 0) this.y = canvas.height;
+    if(this.x > canvas.width) this.x = 0;
+    if(this.x < 0) this.x = canvas.width;
+    if(this.y > canvas.height) this.y = 0;
+    if(this.y < 0) this.y = canvas.height;
   }
 
   draw() {
@@ -60,18 +60,14 @@ window.addEventListener('resize', ()=>{
 init();
 animate();
 
-// -------- SPA + Indicação com Transições --------
-
-// Carrega usuários do localStorage
+// -------- SPA + Indicação --------
 let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
 let usuarioLogado = null;
 
-// Salva usuários
 function salvarUsuarios() {
   localStorage.setItem('usuarios', JSON.stringify(usuarios));
 }
 
-// Atualiza a pontuação na tela do usuário logado
 function atualizarPontuacaoTela() {
   if(usuarioLogado) {
     const span = document.getElementById('pontos');
@@ -79,7 +75,6 @@ function atualizarPontuacaoTela() {
   }
 }
 
-// Verifica indicação via URL
 function checkReferral() {
   const params = new URLSearchParams(window.location.search);
   const refId = params.get('ref');
@@ -95,21 +90,20 @@ function checkReferral() {
 }
 checkReferral();
 
-// Função para trocar tela com animação
+// Função de transição
 function trocarTela(funcTela) {
   container.classList.remove('fadeIn');
   container.classList.add('fadeOut');
 
   container.addEventListener('animationend', function handler() {
     container.removeEventListener('animationend', handler);
-
-    funcTela(); // Troca conteúdo
+    funcTela();
     container.classList.remove('fadeOut');
     container.classList.add('fadeIn');
   });
 }
 
-// Clique no botão "Começar"
+// Clique "Começar"
 btnComecar.addEventListener('click', () => {
   trocarTela(() => showCadastro());
 });
