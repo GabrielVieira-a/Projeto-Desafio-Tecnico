@@ -16,6 +16,16 @@ body {
   overflow: hidden;
 }
 
+/* Canvas de fundo */
+#background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
 /* Container central */
 .container {
   text-align: center;
@@ -24,7 +34,7 @@ body {
   padding: 40px 60px;
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-  animation: fadeIn 2.5s ease-in-out; /* ⬅️ tempo mais lento */
+  animation: fadeIn 2.5s ease-in-out;
 }
 
 /* Título */
@@ -33,7 +43,7 @@ body {
   margin-bottom: 15px;
   letter-spacing: 1px;
   opacity: 0;
-  animation: fadeInText 3s ease forwards; /* ⬅️ suaviza a entrada do texto */
+  animation: fadeInText 3s ease forwards;
   animation-delay: 0.5s;
 }
 
@@ -56,7 +66,7 @@ body {
   cursor: pointer;
   font-size: 1rem;
   font-weight: 500;
-  transition: all 0.4s ease; /* ⬅️ transição mais suave */
+  transition: all 0.4s ease;
   opacity: 0;
   animation: fadeInText 3s ease forwards;
   animation-delay: 1.5s;
@@ -67,28 +77,15 @@ body {
   transform: scale(1.05);
 }
 
-/* Animação de entrada geral */
+/* Animações */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Animação de texto individual */
 @keyframes fadeInText {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Responsividade */
