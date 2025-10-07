@@ -30,19 +30,22 @@ class Particle {
   draw() {
     ctx.fillStyle = this.color;
     ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     ctx.fill();
   }
 }
 
 function init() {
   particlesArray = [];
-  for (let i=0; i<numberOfParticles; i++) particlesArray.push(new Particle());
+  for (let i = 0; i < numberOfParticles; i++) particlesArray.push(new Particle());
 }
 
 function animate() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  particlesArray.forEach(p => { p.update(); p.draw(); });
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particlesArray.forEach((p) => {
+    p.update();
+    p.draw();
+  });
   requestAnimationFrame(animate);
 }
 
@@ -86,13 +89,22 @@ function showCadastro() {
       <input type="password" name="senha" placeholder="Senha" required>
       <button type="submit">Cadastrar</button>
     </form>
+    <p style="margin-top:15px;">Já tem uma conta? 
+      <a href="#" id="linkLogin" style="color:#00c896; text-decoration:none; font-weight:500;">Entrar</a>
+    </p>
     <p id="mensagem" style="color:#ff8080; margin-top:10px;"></p>
   `;
 
   const form = document.getElementById('formCadastro');
   const mensagem = document.getElementById('mensagem');
+  const linkLogin = document.getElementById('linkLogin');
 
-  form.addEventListener('submit', async e => {
+  linkLogin.addEventListener('click', (e) => {
+    e.preventDefault();
+    trocarTela(() => showLogin());
+  });
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const nome = form.nome.value.trim();
@@ -114,8 +126,8 @@ function showCadastro() {
 
       const response = await fetch('http://localhost:3000/api/users/register', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ name: nome, email, password: senha, referralCode })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: nome, email, password: senha, referralCode }),
       });
 
       const data = await response.json();
@@ -126,7 +138,59 @@ function showCadastro() {
       } else {
         mensagem.textContent = data.error || 'Erro ao cadastrar';
       }
-    } catch(err) {
+    } catch (err) {
+      console.error(err);
+      mensagem.textContent = 'Erro de conexão com o servidor';
+    }
+  });
+}
+
+// Tela de login
+function showLogin() {
+  container.innerHTML = `
+    <h2>Login</h2>
+    <form id="formLogin">
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="password" name="senha" placeholder="Senha" required>
+      <button type="submit">Entrar</button>
+    </form>
+    <p style="margin-top:15px;">Ainda não tem conta? 
+      <a href="#" id="linkCadastro" style="color:#00c896; text-decoration:none; font-weight:500;">Cadastre-se</a>
+    </p>
+    <p id="mensagem" style="color:#ff8080; margin-top:10px;"></p>
+  `;
+
+  const form = document.getElementById('formLogin');
+  const mensagem = document.getElementById('mensagem');
+  const linkCadastro = document.getElementById('linkCadastro');
+
+  linkCadastro.addEventListener('click', (e) => {
+    e.preventDefault();
+    trocarTela(() => showCadastro());
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = form.email.value.trim();
+    const senha = form.senha.value.trim();
+
+    try {
+      const response = await fetch('http://localhost:3000/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: senha }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        usuarioLogado = data.user;
+        trocarTela(() => showPerfil(usuarioLogado));
+      } else {
+        mensagem.textContent = data.error || 'Credenciais inválidas';
+      }
+    } catch (err) {
       console.error(err);
       mensagem.textContent = 'Erro de conexão com o servidor';
     }
@@ -148,12 +212,12 @@ async function showPerfil(usuario) {
 
     const copiarBtn = document.getElementById('copiarBtn');
     copiarBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText(`http://127.0.0.1:5500/index.html?ref=${user.referralCode}`)
-        .then(()=>alert('Link copiado!'))
-        .catch(()=>alert('Erro ao copiar link'));
+      navigator.clipboard
+        .writeText(`http://127.0.0.1:5500/index.html?ref=${user.referralCode}`)
+        .then(() => alert('Link copiado!'))
+        .catch(() => alert('Erro ao copiar link'));
     });
-
-  } catch(err) {
+  } catch (err) {
     console.error(err);
     container.innerHTML = '<p>Erro ao carregar perfil</p>';
   }
