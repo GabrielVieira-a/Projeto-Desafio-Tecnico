@@ -99,9 +99,10 @@ A IA foi usada como **assistente técnica e pedagógica**, nunca como substituta
 💻 *Formação em Desenvolvimento Full Stack* — **Digital College**  
 🔧 *Técnico em Mecânica Industrial* — **IFCE**  
 
+
 📱 **Número para contato e whatsapp:** (85) 98773-6799
 
-✉️ **Contato:** [gabrielvaranha2006@gmail.com](mailto:gabrielvaranha2006@gmail.com)  
+✉️ **Email:** [gabrielvaranha2006@gmail.com](mailto:gabrielvaranha2006@gmail.com)  
 🔗 **LinkedIn:** [https://www.linkedin.com/in/gabrielvieira-dev/](https://www.linkedin.com/in/gabrielvieira-dev/)  
 
 🟢 Projeto criado para **fins de aprendizado** e **demonstração de integração Full Stack**.
