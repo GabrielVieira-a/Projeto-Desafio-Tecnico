@@ -62,4 +62,18 @@ A aplicação foi criada com foco em **simplicidade**, **organização do códig
 3. O servidor estará rodando em:
    ```arduíno
    arduíno:
-   http://localhost:3000   
+   http://localhost:3000
+
+---
+
+##  Executar o Front-end
+
+1. Acesse a pasta onde está o arquivo **`index.html`**.  
+2. Abra-o no navegador (duplo clique) ou use a extensão **Live Server** (VS Code).  
+3. Certifique-se de que o servidor **Node** está rodando (passo anterior).  
+4. O app estará acessível em algo como:
+ ```arduíno
+   arduíno:
+http://127.0.0.1:5500/index.html
+
+
