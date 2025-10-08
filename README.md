@@ -100,6 +100,7 @@ A IA foi usada como **assistente técnica e pedagógica**, nunca como substituta
 🔧 *Técnico em Mecânica Industrial* — **IFCE**  
 
 📱 **Número para contato e whatsapp:** (85) 98773-6799
+
 ✉️ **Contato:** [gabrielvaranha2006@gmail.com](mailto:gabrielvaranha2006@gmail.com)  
 🔗 **LinkedIn:** [https://www.linkedin.com/in/gabrielvieira-dev/](https://www.linkedin.com/in/gabrielvieira-dev/)  
 
