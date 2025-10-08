@@ -71,12 +71,39 @@ A aplicação foi criada com foco em **simplicidade**, **organização do códig
 1. Acesse a pasta onde está o arquivo **`index.html`**.  
 2. Abra-o no navegador (duplo clique) ou use a extensão **Live Server** (VS Code).  
 3. Certifique-se de que o servidor **Node** está rodando (passo anterior).  
-4. O app estará acessível em algo como:
- ```arduíno
-   arduíno:
-   http://127.0.0.1:5500/index.html
 
+---
 
+##  Colaboração com IA
+
+Durante o desenvolvimento, usei a Inteligência Artificial **Copilot** e **ChatGPT (modelo GPT-5)** como ferramenta de apoio técnico e educacional.
+
+### Como a IA foi utilizada:
+
+-  **Estruturação do projeto Full Stack** (organização entre front e back)
+-  **Sugestões de design e animações** para o front-end  
+-  **Idealização** deste README.md 
+-  **Suporte técnico** para os códigos que estavam sendo escritos  
+
+### O que foi aprendido:
+
+A colaboração com IA **acelerou o processo de aprendizado**, ajudando a compreender conceitos técnicos atuais e utilizados no mercado.  
+A IA foi usada como **assistente técnica e pedagógica**, nunca como substituta da prática e da compreensão.
+
+---
+
+##  Autor
+
+**Gabriel Vieira**  
+🎓 *Estudante de Análise e Desenvolvimento de Sistemas* — **UNIFOR**  
+💻 *Formação em Desenvolvimento Full Stack* — **Digital College**  
+🔧 *Técnico em Mecânica Industrial* — **IFCE**  
+
+📱 **Número para contato e whatsapp:** (85) 98773-6799
+✉️ **Contato:** [gabrielvaranha2006@gmail.com](mailto:gabrielvaranha2006@gmail.com)  
+🔗 **LinkedIn:** [https://www.linkedin.com/in/gabrielvieira-dev/](https://www.linkedin.com/in/gabrielvieira-dev/)  
+
+🟢 Projeto criado para **fins de aprendizado** e **demonstração de integração Full Stack**.
 
 
 
