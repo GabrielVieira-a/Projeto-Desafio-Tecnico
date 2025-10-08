@@ -1,8 +1,8 @@
 // --------- Partículas ---------
-const canvas = document.getElementById('background');
-const ctx = canvas.getContext('2d');
-const container = document.getElementById('container');
-const btnComecar = document.getElementById('btnComecar');
+const canvas = document.getElementById("background");
+const ctx = canvas.getContext("2d");
+const container = document.getElementById("container");
+const btnComecar = document.getElementById("btnComecar");
 
 let particlesArray;
 const numberOfParticles = 80;
@@ -17,7 +17,7 @@ class Particle {
     this.size = Math.random() * 3 + 1;
     this.speedX = Math.random() * 1 - 0.5;
     this.speedY = Math.random() * 1 - 0.5;
-    this.color = 'rgba(255,255,255,0.6)';
+    this.color = "rgba(255,255,255,0.6)";
   }
   update() {
     this.x += this.speedX;
@@ -37,7 +37,8 @@ class Particle {
 
 function init() {
   particlesArray = [];
-  for (let i = 0; i < numberOfParticles; i++) particlesArray.push(new Particle());
+  for (let i = 0; i < numberOfParticles; i++)
+    particlesArray.push(new Particle());
 }
 
 function animate() {
@@ -49,7 +50,7 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
-window.addEventListener('resize', () => {
+window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   init();
@@ -61,22 +62,14 @@ animate();
 // --------- SPA + Backend ---------
 let usuarioLogado = null;
 
-// Função de transição
+// Transição simplificada (sem animação)
 function trocarTela(funcTela) {
-  container.classList.remove('fadeIn');
-  container.classList.add('fadeOut');
-
-  container.addEventListener('animationend', function handler() {
-    container.removeEventListener('animationend', handler);
-    funcTela();
-    container.classList.remove('fadeOut');
-    container.classList.add('fadeIn');
-  });
+  funcTela();
 }
 
 // Clique "Começar"
-btnComecar.addEventListener('click', () => {
-  trocarTela(() => showCadastro());
+btnComecar.addEventListener("click", () => {
+  showCadastro();
 });
 
 // Tela de cadastro
@@ -95,52 +88,56 @@ function showCadastro() {
     <p id="mensagem" style="color:#ff8080; margin-top:10px;"></p>
   `;
 
-  const form = document.getElementById('formCadastro');
-  const mensagem = document.getElementById('mensagem');
-  const linkLogin = document.getElementById('linkLogin');
+  const form = document.getElementById("formCadastro");
+  const mensagem = document.getElementById("mensagem");
+  const linkLogin = document.getElementById("linkLogin");
 
-  linkLogin.addEventListener('click', (e) => {
+  linkLogin.addEventListener("click", (e) => {
     e.preventDefault();
-    trocarTela(() => showLogin());
+    showLogin();
   });
 
-  form.addEventListener('submit', async (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const nome = form.nome.value.trim();
     const email = form.email.value.trim();
     const senha = form.senha.value.trim();
 
-    if (!email.includes('@')) {
-      mensagem.textContent = 'Email inválido';
+    if (!email.includes("@")) {
+      mensagem.textContent = "Email inválido";
       return;
     }
     if (senha.length < 8 || !/\d/.test(senha) || !/[a-zA-Z]/.test(senha)) {
-      mensagem.textContent = 'Senha deve ter 8+ caracteres, letras e números';
+      mensagem.textContent = "Senha deve ter 8+ caracteres, letras e números";
       return;
     }
 
     try {
       const urlParams = new URLSearchParams(window.location.search);
-      const referralCode = urlParams.get('ref') || null;
+      const referralCode = urlParams.get("ref") || null;
 
-      const response = await fetch('http://localhost:3000/api/users/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      mensagem.textContent = "Cadastrando...";
+      const response = await fetch("http://localhost:3000/api/users/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: nome, email, password: senha, referralCode }),
       });
 
       const data = await response.json();
+      console.log("📩 Resposta do backend (cadastro):", data);
 
-      if (response.ok) {
+      if (response.ok && data.user) {
         usuarioLogado = data.user;
-        trocarTela(() => showPerfil(usuarioLogado));
+        console.log("✅ Usuário cadastrado:", usuarioLogado);
+        showPerfil(usuarioLogado);
       } else {
-        mensagem.textContent = data.error || 'Erro ao cadastrar';
+        console.warn("❌ Erro no cadastro:", data);
+        mensagem.textContent = data.error || "Erro ao cadastrar";
       }
     } catch (err) {
-      console.error(err);
-      mensagem.textContent = 'Erro de conexão com o servidor';
+      console.error("🚨 Erro na requisição:", err);
+      mensagem.textContent = "Erro de conexão com o servidor";
     }
   });
 }
@@ -160,65 +157,88 @@ function showLogin() {
     <p id="mensagem" style="color:#ff8080; margin-top:10px;"></p>
   `;
 
-  const form = document.getElementById('formLogin');
-  const mensagem = document.getElementById('mensagem');
-  const linkCadastro = document.getElementById('linkCadastro');
+  const form = document.getElementById("formLogin");
+  const mensagem = document.getElementById("mensagem");
+  const linkCadastro = document.getElementById("linkCadastro");
 
-  linkCadastro.addEventListener('click', (e) => {
+  linkCadastro.addEventListener("click", (e) => {
     e.preventDefault();
-    trocarTela(() => showCadastro());
+    showCadastro();
   });
 
-  form.addEventListener('submit', async (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const email = form.email.value.trim();
     const senha = form.senha.value.trim();
 
     try {
-      const response = await fetch('http://localhost:3000/api/users/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("http://localhost:3000/api/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password: senha }),
       });
 
       const data = await response.json();
+      console.log("📩 Resposta do backend (login):", data);
 
-      if (response.ok) {
+      if (response.ok && data.user) {
         usuarioLogado = data.user;
-        trocarTela(() => showPerfil(usuarioLogado));
+        console.log("✅ Usuário logado:", usuarioLogado);
+        showPerfil(usuarioLogado);
       } else {
-        mensagem.textContent = data.error || 'Credenciais inválidas';
+        mensagem.textContent = data.error || "Credenciais inválidas";
       }
     } catch (err) {
-      console.error(err);
-      mensagem.textContent = 'Erro de conexão com o servidor';
+      console.error("🚨 Erro no login:", err);
+      mensagem.textContent = "Erro de conexão com o servidor";
     }
   });
 }
 
 // Tela de perfil
 async function showPerfil(usuario) {
+  if (!usuario || !usuario.id) {
+    console.error("❌ showPerfil chamado sem usuário válido:", usuario);
+    container.innerHTML = "<p>Erro ao carregar perfil (usuário inválido)</p>";
+    return;
+  }
+
+  container.innerHTML = "<p>Carregando perfil...</p>";
+
   try {
     const response = await fetch(`http://localhost:3000/api/users/profile/${usuario.id}`);
     const user = await response.json();
+    console.log("👤 Dados do perfil:", user);
+
+    if (!response.ok || !user.id) {
+      container.innerHTML = "<p>Erro ao carregar perfil</p>";
+      return;
+    }
 
     container.innerHTML = `
       <h2>Bem-vindo(a), ${user.name}</h2>
       <p>Pontos: <span id="pontos">${user.points}</span></p>
-      <p>Seu link de indicação: <span id="linkInd">http://127.0.0.1:5500/index.html?ref=${user.referralCode}</span></p>
-      <button id="copiarBtn">Copiar Link</button>
+      <p>Seu link de indicação:</p>
+      <p><strong style="color:#00c896;">http://127.0.0.1:5500/index.html?ref=${user.referralCode}</strong></p>
+      <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+        <button id="copiarBtn">Copiar Link</button>
+        <button id="voltarBtn" style="background:#222; color:#fff;">Voltar ao menu</button>
+      </div>
     `;
 
-    const copiarBtn = document.getElementById('copiarBtn');
-    copiarBtn.addEventListener('click', () => {
+    document.getElementById("copiarBtn").addEventListener("click", () => {
       navigator.clipboard
         .writeText(`http://127.0.0.1:5500/index.html?ref=${user.referralCode}`)
-        .then(() => alert('Link copiado!'))
-        .catch(() => alert('Erro ao copiar link'));
+        .then(() => alert("Link copiado!"))
+        .catch(() => alert("Erro ao copiar link"));
+    });
+
+    document.getElementById("voltarBtn").addEventListener("click", () => {
+      showCadastro();
     });
   } catch (err) {
-    console.error(err);
-    container.innerHTML = '<p>Erro ao carregar perfil</p>';
+    console.error("🚨 Erro ao buscar perfil:", err);
+    container.innerHTML = "<p>Erro ao carregar perfil</p>";
   }
 }

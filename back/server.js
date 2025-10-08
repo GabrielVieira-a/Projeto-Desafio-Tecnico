@@ -23,22 +23,15 @@ app.post("/api/users/register", async (req, res) => {
     if (!name || !email || !password)
       return res.status(400).json({ error: "Campos obrigatórios faltando" });
 
-    // Normaliza email
     const emailNormalized = email.trim().toLowerCase();
 
-    // Verifica se já existe
     const existing = await db.get("SELECT * FROM users WHERE email = ?", [emailNormalized]);
     if (existing) return res.status(400).json({ error: "Email já cadastrado" });
 
-    // Gera hash da senha
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Gera código de referência
     const newReferral = crypto.randomBytes(4).toString("hex");
-
     let referredBy = null;
 
-    // Atualiza pontos se houver referralCode
     if (referralCode) {
       const refUser = await db.get("SELECT * FROM users WHERE referralCode = ?", [referralCode]);
       if (refUser) {
@@ -47,7 +40,6 @@ app.post("/api/users/register", async (req, res) => {
       }
     }
 
-    // **Insere no banco usando as variáveis declaradas acima**
     const result = await db.run(
       "INSERT INTO users (name, email, password, referralCode, referredBy, points) VALUES (?, ?, ?, ?, ?, ?)",
       [name, emailNormalized, hashedPassword, newReferral, referredBy, 0]
@@ -68,7 +60,6 @@ app.post("/api/users/register", async (req, res) => {
   }
 });
 
-
 // Login de usuário existente
 app.post("/api/users/login", async (req, res) => {
   try {
@@ -77,24 +68,14 @@ app.post("/api/users/login", async (req, res) => {
     if (!email || !password)
       return res.status(400).json({ error: "Email e senha são obrigatórios" });
 
-    // Normaliza o email
     email = email.trim().toLowerCase();
 
-    // Busca usuário no banco
     const user = await db.get("SELECT * FROM users WHERE email = ?", [email]);
+    if (!user) return res.status(400).json({ error: "Credenciais inválidas" });
 
-    if (!user) {
-      return res.status(400).json({ error: "Credenciais inválidas" });
-    }
-
-    // Compara senha digitada com hash armazenado
     const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) return res.status(400).json({ error: "Credenciais inválidas" });
 
-    if (!passwordMatch) {
-      return res.status(400).json({ error: "Credenciais inválidas" });
-    }
-
-    // Retorna dados do usuário
     res.json({
       user: {
         id: user.id,
@@ -110,8 +91,25 @@ app.post("/api/users/login", async (req, res) => {
   }
 });
 
+// Perfil do usuário
+app.get("/api/users/profile/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await db.get(
+      "SELECT id, name, email, referralCode, points FROM users WHERE id = ?",
+      [id]
+    );
+
+    if (!user) return res.status(404).json({ error: "Usuário não encontrado" });
+
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Erro ao buscar perfil" });
+  }
+});
+
 // ---------- INICIAR SERVIDOR ----------
 const PORT = 3000;
-app.listen(PORT, () =>
-  console.log(`🚀 Servidor rodando em http://localhost:${PORT}`)
-);
+app.listen(PORT, () => console.log(`🚀 Servidor rodando em http://localhost:${PORT}`));
