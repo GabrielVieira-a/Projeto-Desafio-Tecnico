@@ -1,4 +1,4 @@
-// --------- Partículas ---------
+// Partículas
 const canvas = document.getElementById("background");
 const ctx = canvas.getContext("2d");
 const container = document.getElementById("container");
@@ -59,7 +59,7 @@ window.addEventListener("resize", () => {
 init();
 animate();
 
-// --------- SPA + Backend ---------
+// SPA + Backend
 let usuarioLogado = null;
 
 // Transição simplificada (sem animação)
@@ -125,18 +125,18 @@ function showCadastro() {
       });
 
       const data = await response.json();
-      console.log("📩 Resposta do backend (cadastro):", data);
+      console.log(" Resposta do backend (cadastro):", data);
 
       if (response.ok && data.user) {
         usuarioLogado = data.user;
-        console.log("✅ Usuário cadastrado:", usuarioLogado);
+        console.log(" Usuário cadastrado:", usuarioLogado);
         showPerfil(usuarioLogado);
       } else {
-        console.warn("❌ Erro no cadastro:", data);
+        console.warn(" Erro no cadastro:", data);
         mensagem.textContent = data.error || "Erro ao cadastrar";
       }
     } catch (err) {
-      console.error("🚨 Erro na requisição:", err);
+      console.error(" Erro na requisição:", err);
       mensagem.textContent = "Erro de conexão com o servidor";
     }
   });
@@ -180,17 +180,17 @@ function showLogin() {
       });
 
       const data = await response.json();
-      console.log("📩 Resposta do backend (login):", data);
+      console.log(" Resposta do backend (login):", data);
 
       if (response.ok && data.user) {
         usuarioLogado = data.user;
-        console.log("✅ Usuário logado:", usuarioLogado);
+        console.log(" Usuário logado:", usuarioLogado);
         showPerfil(usuarioLogado);
       } else {
         mensagem.textContent = data.error || "Credenciais inválidas";
       }
     } catch (err) {
-      console.error("🚨 Erro no login:", err);
+      console.error(" Erro no login:", err);
       mensagem.textContent = "Erro de conexão com o servidor";
     }
   });
@@ -199,7 +199,7 @@ function showLogin() {
 // Tela de perfil
 async function showPerfil(usuario) {
   if (!usuario || !usuario.id) {
-    console.error("❌ showPerfil chamado sem usuário válido:", usuario);
+    console.error(" showPerfil chamado sem usuário válido:", usuario);
     container.innerHTML = "<p>Erro ao carregar perfil (usuário inválido)</p>";
     return;
   }
@@ -209,7 +209,7 @@ async function showPerfil(usuario) {
   try {
     const response = await fetch(`http://localhost:3000/api/users/profile/${usuario.id}`);
     const user = await response.json();
-    console.log("👤 Dados do perfil:", user);
+    console.log(" Dados do perfil:", user);
 
     if (!response.ok || !user.id) {
       container.innerHTML = "<p>Erro ao carregar perfil</p>";
@@ -238,7 +238,7 @@ async function showPerfil(usuario) {
       showCadastro();
     });
   } catch (err) {
-    console.error("🚨 Erro ao buscar perfil:", err);
+    console.error(" Erro ao buscar perfil:", err);
     container.innerHTML = "<p>Erro ao carregar perfil</p>";
   }
 }

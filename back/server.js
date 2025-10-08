@@ -13,7 +13,7 @@ let db;
   db = await initDB();
 })();
 
-// ---------- ROTAS ----------
+// ROTAS
 
 // Registrar novo usuário
 app.post("/api/users/register", async (req, res) => {
@@ -110,6 +110,6 @@ app.get("/api/users/profile/:id", async (req, res) => {
   }
 });
 
-// ---------- INICIAR SERVIDOR ----------
+// INICIAR SERVIDOR
 const PORT = 3000;
-app.listen(PORT, () => console.log(`🚀 Servidor rodando em http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(` Servidor rodando em http://localhost:${PORT}`));
