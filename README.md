@@ -51,12 +51,15 @@ A aplicação foi criada com foco em **simplicidade**, **organização do códig
 
 1. Acesse a pasta `back`:
    ```bash
+   bash:
    cd back
 
 2. Inicie o Servidor:
    ```bash
+   bash:
    npm start
 
 3. O servidor estará rodando em:
    ```arduíno
+   arduíno:
    http://localhost:3000   
